@@ -25,7 +25,17 @@ router.post("/", requireAuth, async (req, res) => {
     res.status(500).json({ error: "Server error" });
   }
 });
-
+// Get vendor profile for logged-in user
+router.get("/me", requireAuth, async (req, res) => {
+  try {
+    const vendor = await Vendor.findOne({ ownerUserId: req.user._id });
+    if (!vendor) return res.json(null);
+    res.json(vendor);
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: "Server error" });
+  }
+});
 // Public: get vendor storefront
 router.get("/:slug", async (req, res) => {
   try {
