@@ -38,7 +38,19 @@ router.post("/", requireAuth, async (req, res) => {
     res.status(500).json({ error: "Server error" });
   }
 });
+// Backend route for Vendor products
+router.get("/vendor/me", requireAuth, async (req, res) => {
+  try {
+    const vendor = await Vendor.findOne({ ownerUserId: req.user._id });
+    if (!vendor) return res.json([]);
 
+    const products = await Product.find({ vendorId: vendor._id });
+    res.json(products);
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: "Server error" });
+  }
+});
 // Public: list products (with optional search)
 router.get("/", async (req, res) => {
   const { q } = req.query;
