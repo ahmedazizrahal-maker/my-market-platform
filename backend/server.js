@@ -17,6 +17,9 @@ app.use(express.json());
 connectDB();
 
 app.get("/api/health", (req, res) => res.json({ status: "ok" }));
+app.get("/api/debug-token", require("./middleware/auth"), (req, res) => {
+  res.json({ userFromToken: req.user });
+});
 
 app.use("/api/auth", authRoutes);
 app.use("/api/vendors", vendorRoutes);
