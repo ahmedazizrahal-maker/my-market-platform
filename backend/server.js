@@ -24,9 +24,10 @@ app.use("/api/products", productRoutes);
 app.use("/api/ads", adRoutes);
 app.use("/api/checkout", checkoutRoutes);
 
-app.get("/api/debug-token", require("./middleware/auth"), (req, res) => {
+app.get("/api/debug-token", (req, res) => {
   res.json({ userFromToken: req.user });
 });
+//, require("./middleware/auth")
 
 const PORT = process.env.PORT || 4000;
 app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
