@@ -30,7 +30,7 @@ router.get("/me", requireAuth, async (req, res) => {
   try {
     const mongoose = require("mongoose");
 
-    const vendor = await Vendor.findOne({ownerUserId: new mongoose.Types.ObjectId("69c71b746b3ebd7e0dd8877b")  });
+    const vendor = await Vendor.findOne({ownerUserId: req.user._id.toString()});
     //new mongoose.Types.ObjectId(req.user._id)
     //const vendor = await Vendor.findOne({ ownerUserId: req.user._id });
     if (!vendor) return res.json(null);
