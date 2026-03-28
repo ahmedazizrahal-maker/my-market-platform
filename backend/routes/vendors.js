@@ -26,9 +26,6 @@ router.post("/", requireAuth, async (req, res) => {
   }
 });
 // Get vendor profile for logged-in user
-app.get("/debug-token", require("./middleware/auth"), (req, res) => {
-  res.json({ userFromToken: req.user });
-});
 router.get("/me", requireAuth, async (req, res) => {
   try {
     const mongoose = require("mongoose");
