@@ -28,7 +28,10 @@ router.post("/", requireAuth, async (req, res) => {
 // Get vendor profile for logged-in user
 router.get("/me", requireAuth, async (req, res) => {
   try {
-    const vendor = await Vendor.findOne({ ownerUserId: req.user._id });
+    const mongoose = require("mongoose");
+
+    const vendor = await Vendor.findOne({ownerUserId: new mongoose.Types.ObjectId(req.user._id)});
+    //const vendor = await Vendor.findOne({ ownerUserId: req.user._id });
     if (!vendor) return res.json(null);
     res.json(vendor);
   } catch (err) {
