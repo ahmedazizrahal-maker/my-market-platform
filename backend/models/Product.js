@@ -5,6 +5,7 @@ const ProductSchema = new mongoose.Schema({
   title: { type: String, required: true },
   description: String,
   images: [String],
+  imageUrl: String,
   basePrice: { type: Number, required: true },
   currentPrice: { type: Number, required: true },
   sku: { type: String, index: true }, // used for comparison
