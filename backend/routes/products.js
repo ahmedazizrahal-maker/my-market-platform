@@ -12,7 +12,7 @@ router.post("/", requireAuth, async (req, res) => {
     const vendor = await Vendor.findOne({ ownerUserId: req.user._id });
     if (!vendor) return res.status(403).json({ error: "Not a vendor" });
 
-    const { title, description, images, basePrice, currentPrice, sku, category, stock } = req.body;
+    const { title, description, images, basePrice, currentPrice, sku, category, stock,imageUrl } = req.body;
 
     const product = await Product.create({
       vendorId: vendor._id,
