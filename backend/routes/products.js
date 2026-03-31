@@ -18,12 +18,13 @@ router.post("/", requireAuth, async (req, res) => {
       vendorId: vendor._id,
       title,
       description,
-      images,
+      //images,
       basePrice,
       currentPrice,
       sku,
       category,
       stock,
+      imageUrl,
     });
 
     await PriceHistory.create({
