@@ -51,5 +51,28 @@ router.get("/:slug", async (req, res) => {
     res.status(500).json({ error: "Server error" });
   }
 });
+router.put("/products/:id", async (req, res) => {
+  try {
+    const product = await Product.findOne({
+      _id: req.params.id,
+      vendor: req.vendorId, // ensure vendor owns it
+    });
+
+    if (!product) return res.status(404).json({ error: "Not found" });
+
+    product.title = req.body.title;
+    product.description = req.body.description;
+    product.currentPrice = req.body.currentPrice;
+    product.stock = req.body.stock;
+    product.sku = req.body.sku;
+    product.images = req.body.images;
+
+    await product.save();
+
+    res.json(product);
+  } catch (err) {
+    res.status(500).json({ error: "Update failed" });
+  }
+});
 
 module.exports = router;
