@@ -47,8 +47,26 @@ router.get("/me", requireAuth, async (req, res) => {
     res.status(500).json({ error: "Server error" });
   }
 });
+// get for editing the product
+router.get("/products/:id", requireAuth, async (req, res) => {
+  try {
+    const product = await Product.findOne({
+      _id: req.params.id,
+      vendor: req.vendorId, // ensure vendor owns it
+    });
 
-// Update product (vendor only)
+    if (!product) {
+      return res.status(404).json({ error: "Product not found" });
+    }
+
+    res.json(product);
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: "Server error" });
+  }
+});
+
+// Update product (vendor only) for saving
 router.put("/products/:id", requireAuth, async (req, res) => {
   try {
     const product = await Product.findOne({
