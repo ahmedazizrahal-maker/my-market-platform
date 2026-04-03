@@ -58,19 +58,49 @@ router.put("/products/:id", async (req, res) => {
       vendor: req.vendorId, // ensure vendor owns it
     });
 
-    if (!product) return res.status(404).json({ error: "Not found" });
+    if (!product) {
+      return res.status(404).json({ error: "Product not found" });
+    }
 
+    // Validate fields
+    if (typeof req.body.currentPrice !== "number") {
+      return res.status(400).json({ error: "Invalid price" });
+    }
+
+    if (typeof req.body.stock !== "number") {
+      return res.status(400).json({ error: "Invalid stock" });
+    }
+
+    if (!Array.isArray(req.body.images)) {
+      return res.status(400).json({ error: "Images must be an array" });
+    }
+
+    // Handle image deletion
+    const oldImages = product.images;
+    const newImages = req.body.images;
+
+    const removedImages = oldImages.filter(
+      (img) => !newImages.includes(img)
+    );
+
+    for (const img of removedImages) {
+      const publicId = extractPublicId(img);
+      await cloudinary.uploader.destroy(publicId);
+    }
+
+    // Update fields
     product.title = req.body.title;
     product.description = req.body.description;
     product.currentPrice = req.body.currentPrice;
     product.stock = req.body.stock;
     product.sku = req.body.sku;
-    product.images = req.body.images;
+    product.images = newImages;
 
     await product.save();
 
     res.json(product);
   } catch (err) {
+    console.error(err);
     res.status(500).json({ error: "Update failed" });
   }
 });
