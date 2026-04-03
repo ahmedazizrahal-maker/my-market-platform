@@ -1,10 +1,20 @@
 const express = require("express");
 const Vendor = require("../models/Vendor");
+const Product = require("../models/Product");
+const cloudinary = require("../config/cloudinary");
 const { requireAuth, requireRole } = require("../middleware/auth");
 
 const router = express.Router();
 
-// Create vendor profile for current user
+// Helper: extract Cloudinary public ID
+function extractPublicId(url) {
+  const parts = url.split("/");
+  const filename = parts.pop();
+  const folder = parts.pop();
+  return `${folder}/${filename.split(".")[0]}`;
+}
+
+// Create vendor profile
 router.post("/", requireAuth, async (req, res) => {
   const { name, slug, logo, theme } = req.body;
   try {
@@ -25,14 +35,11 @@ router.post("/", requireAuth, async (req, res) => {
     res.status(500).json({ error: "Server error" });
   }
 });
+
 // Get vendor profile for logged-in user
 router.get("/me", requireAuth, async (req, res) => {
   try {
-    const mongoose = require("mongoose");
-
-    const vendor = await Vendor.findOne({ownerUserId: new mongoose.Types.ObjectId(req.user._id)});
-    //new mongoose.Types.ObjectId(req.user._id)
-    //const vendor = await Vendor.findOne({ ownerUserId: req.user._id });
+    const vendor = await Vendor.findOne({ ownerUserId: req.user._id });
     if (!vendor) return res.json(null);
     res.json(vendor);
   } catch (err) {
@@ -40,18 +47,9 @@ router.get("/me", requireAuth, async (req, res) => {
     res.status(500).json({ error: "Server error" });
   }
 });
-// Public: get vendor storefront
-router.get("/:slug", async (req, res) => {
-  try {
-    const vendor = await Vendor.findOne({ slug: req.params.slug });
-    if (!vendor) return res.status(404).json({ error: "Vendor not found" });
-    res.json(vendor);
-  } catch (err) {
-    console.error(err);
-    res.status(500).json({ error: "Server error" });
-  }
-});
-router.put("/products/:id", async (req, res) => {
+
+// Update product (vendor only)
+router.put("/products/:id", requireAuth, async (req, res) => {
   try {
     const product = await Product.findOne({
       _id: req.params.id,
@@ -102,6 +100,18 @@ router.put("/products/:id", async (req, res) => {
   } catch (err) {
     console.error(err);
     res.status(500).json({ error: "Update failed" });
+  }
+});
+
+// Public vendor storefront (must be last)
+router.get("/:slug", async (req, res) => {
+  try {
+    const vendor = await Vendor.findOne({ slug: req.params.slug });
+    if (!vendor) return res.status(404).json({ error: "Vendor not found" });
+    res.json(vendor);
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: "Server error" });
   }
 });
 
