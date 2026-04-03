@@ -52,7 +52,7 @@ router.get("/products/:id", requireAuth, async (req, res) => {
   try {
     const product = await Product.findOne({
       _id: req.params.id,
-      ownerUserId: req.vendorId, // ensure vendor owns it
+      vendorId: req.vendorId, // ensure vendor owns it
     });
 
     if (!product) {
@@ -71,7 +71,7 @@ router.put("/products/:id", requireAuth, async (req, res) => {
   try {
     const product = await Product.findOne({
       _id: req.params.id,
-      ownerUserId: req.vendorId, // ensure vendor owns it
+      vendorId: req.vendorId, // ensure vendor owns it
     });
 
     if (!product) {
