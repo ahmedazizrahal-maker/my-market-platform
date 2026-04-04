@@ -11,7 +11,9 @@ async function requireAuth(req, res, next) {
     const payload = jwt.verify(token, process.env.JWT_SECRET);
     req.user = await User.findById(payload.id);
     if (!req.user) return res.status(401).json({ error: "Unauthorized" });
-    req.vendorId = payload.id;
+    const vendor = await Vendor.findOne({ ownerUserId: payload.id });
+    req.vendorId = vendor ? vendor._id : null;
+
     next();
   } catch {
     return res.status(401).json({ error: "Unauthorized" });
