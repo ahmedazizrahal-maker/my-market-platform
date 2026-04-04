@@ -120,6 +120,32 @@ router.put("/products/:id", requireAuth, async (req, res) => {
     res.status(500).json({ error: "Update failed" });
   }
 });
+// Delet Product
+router.delete("/products/:id", requireAuth, async (req, res) => {
+  try {
+    const product = await Product.findOne({
+      _id: req.params.id,
+      vendor: req.vendorId, // ensure vendor owns it
+    });
+
+    if (!product) {
+      return res.status(404).json({ error: "Product not found" });
+    }
+
+    // Delete all Cloudinary images
+    for (const img of product.images) {
+      const publicId = extractPublicId(img);
+      await cloudinary.uploader.destroy(publicId);
+    }
+
+    await product.deleteOne();
+
+    res.json({ success: true });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: "Delete failed" });
+  }
+});
 
 // Public vendor storefront (must be last)
 router.get("/:slug", async (req, res) => {
