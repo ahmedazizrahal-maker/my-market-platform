@@ -8,11 +8,15 @@ const router = express.Router();
 
 // Helper: extract Cloudinary public ID
 function extractPublicId(url) {
-  const parts = url.split("/");
-  const filename = parts.pop();
-  const folder = parts.pop();
-  return `${folder}/${filename.split(".")[0]}`;
+  const withoutParams = url.split("?")[0];
+  const parts = withoutParams.split("/upload/");
+  if (parts.length < 2) return null;
+
+  const path = parts[1]; // everything after /upload/
+  const noExt = path.substring(0, path.lastIndexOf("."));
+  return noExt;
 }
+
 
 // Create vendor profile
 router.post("/", requireAuth, async (req, res) => {
