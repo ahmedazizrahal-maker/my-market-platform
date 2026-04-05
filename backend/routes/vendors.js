@@ -83,13 +83,20 @@ router.put("/products/:id", requireAuth, async (req, res) => {
     }
 
     // Validate fields
-    if (typeof req.body.currentPrice !== "number") {
-      return res.status(400).json({ error: "Invalid price" });
+    if (isNaN(req.body.currentPrice)) {
+    return res.status(400).json({ error: "Invalid price" });
     }
 
-    if (typeof req.body.stock !== "number") {
-      return res.status(400).json({ error: "Invalid stock" });
+    // if (typeof req.body.currentPrice !== "number") {
+    //   return res.status(400).json({ error: "Invalid price" });
+    // }
+    if (isNaN(req.body.stock)) {
+    return res.status(400).json({ error: "Invalid stock" });
     }
+
+    // if (typeof req.body.stock !== "number") {
+    //   return res.status(400).json({ error: "Invalid stock" });
+    // }
 
     if (!Array.isArray(req.body.images)) {
       return res.status(400).json({ error: "Images must be an array" });
