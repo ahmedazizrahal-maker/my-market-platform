@@ -127,9 +127,10 @@ router.put("/products/:id", requireAuth, async (req, res) => {
 
     res.json(product);
   } catch (err) {
-    console.error("UPDATE ERROR:", err);
+    console.error("🔥 UPDATE PRODUCT ERROR:", err);
+    res.status(500).json({ error: err.message, stack: err.stack });
     // console.error(err);
-    res.status(500).json({ error: "Update failed" });
+    // res.status(500).json({ error: "Update failed" });
   }
 });
 // Delet Product
