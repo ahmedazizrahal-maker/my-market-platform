@@ -127,7 +127,8 @@ router.put("/products/:id", requireAuth, async (req, res) => {
 
     res.json(product);
   } catch (err) {
-    console.error(err);
+    console.error("UPDATE ERROR:", err);
+    // console.error(err);
     res.status(500).json({ error: "Update failed" });
   }
 });
