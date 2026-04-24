@@ -32,6 +32,9 @@ router.post("/create-session", async (req, res) => {
       ],
       success_url: `${process.env.FRONTEND_URL}/success`,
       cancel_url: `${process.env.FRONTEND_URL}/cancel`,
+      metadata: {
+        productId: productId,
+      },
     });
 
     res.json({ url: session.url });
