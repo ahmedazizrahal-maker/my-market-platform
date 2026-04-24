@@ -27,6 +27,8 @@ app.use("/api/products", productRoutes);
 app.use("/api/ads", adRoutes);
 app.use("/api/checkout", checkoutRoutes);
 app.use("/api/upload", uploadRoutes);
+app.use("/api/stripe", require("./routes/stripeWebhook"));
+
 
 app.get("/api/debug-token", requireAuth , (req, res) => {
   res.json({ userFromToken: req.user });
