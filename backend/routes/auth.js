@@ -41,4 +41,22 @@ router.post("/login", async (req, res) => {
   }
 });
 
+router.post("/set-password", async (req, res) => {
+  try {
+    const { uid, password } = req.body;
+
+    const hashed = await bcrypt.hash(password, 10);
+
+    await User.findByIdAndUpdate(uid, {
+      password: hashed,
+      isGuest: false,
+    });
+
+    res.json({ success: true });
+  } catch (err) {
+    console.error("Set password error:", err);
+    res.status(500).json({ error: "Failed to set password" });
+  }
+});
+
 module.exports = router;
